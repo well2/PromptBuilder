@@ -142,7 +142,7 @@ const TemplateDetailPage: React.FC = () => {
                 </div>
               ) : (
                 <p className="text-sm text-gray-500">
-                  This template doesn't have any variables. Add variables using double curly braces, e.g., <code className="bg-gray-100 px-1 py-0.5 rounded">{{'{{'}}variable{{'}}'}}</code>
+                  This template doesn't have any variables. Add variables using double curly braces, e.g., <code className="bg-gray-100 px-1 py-0.5 rounded">{'{{variable}}'}</code>
                 </p>
               )}
             </Card>

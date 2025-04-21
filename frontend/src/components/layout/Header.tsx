@@ -1,52 +1,87 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  HomeIcon,
+  FolderIcon,
+  DocumentIcon,
+  CommandLineIcon,
+  PlusIcon
+} from '@heroicons/react/24/outline';
 
 const Header: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  
+
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
-  
+
+  const navItems = [
+    { name: 'Home', path: '/', icon: <HomeIcon className="w-5 h-5" /> },
+    { name: 'Categories', path: '/categories', icon: <FolderIcon className="w-5 h-5" /> },
+    { name: 'Templates', path: '/templates', icon: <DocumentIcon className="w-5 h-5" /> },
+    { name: 'Generate', path: '/generate', icon: <CommandLineIcon className="w-5 h-5" /> },
+  ];
+
   return (
-    <header className="bg-white shadow-sm">
+    <header className="bg-gradient-to-r from-indigo-50 to-purple-50 shadow-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex">
             <div className="flex-shrink-0 flex items-center">
               <Link to="/" className="flex items-center">
-                <span className="text-primary-600 font-bold text-xl">PromptBuilder</span>
+                <motion.div
+                  initial={{ rotate: 0 }}
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 2, repeat: Infinity, repeatType: 'loop', ease: 'linear' }}
+                  className="w-8 h-8 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-full mr-3 flex items-center justify-center shadow-lg"
+                >
+                  <span className="text-white font-bold text-sm">P</span>
+                </motion.div>
+                <motion.span
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600"
+                >
+                  PromptBuilder
+                </motion.span>
               </Link>
             </div>
-            <nav className="hidden sm:ml-6 sm:flex sm:space-x-8">
-              <Link
-                to="/"
-                className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
-              >
-                Home
-              </Link>
-              <Link
-                to="/categories"
-                className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
-              >
-                Categories
-              </Link>
-              <Link
-                to="/templates"
-                className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
-              >
-                Templates
-              </Link>
-              <Link
-                to="/generate"
-                className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
-              >
-                Generate
-              </Link>
+            <nav className="hidden sm:ml-10 sm:flex sm:space-x-10">
+              {navItems.map((item, index) => (
+                <motion.div
+                  key={item.name}
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: index * 0.1 }}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Link
+                    to={item.path}
+                    className="border-transparent text-gray-700 hover:border-indigo-500 hover:text-indigo-700 inline-flex items-center px-4 pt-1 border-b-2 text-base font-bold transition-all duration-200 space-x-2 hover:scale-110"
+                  >
+                    <div className="text-indigo-600 w-5 h-5">{item.icon}</div>
+                    <span>{item.name}</span>
+                  </Link>
+                </motion.div>
+              ))}
             </nav>
           </div>
+          <div className="hidden sm:flex sm:items-center">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-md shadow-md flex items-center space-x-2 text-sm"
+            >
+              <PlusIcon className="w-5 h-5" />
+              <span>New Prompt</span>
+            </motion.button>
+          </div>
           <div className="-mr-2 flex items-center sm:hidden">
-            <button
+            <motion.button
+              whileTap={{ scale: 0.9 }}
               type="button"
               className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500"
               aria-expanded="false"
@@ -85,40 +120,56 @@ const Header: React.FC = () => {
                   d="M6 18L18 6M6 6l12 12"
                 />
               </svg>
-            </button>
+            </motion.button>
           </div>
         </div>
       </div>
 
       {/* Mobile menu, show/hide based on menu state */}
-      <div className={`${isMobileMenuOpen ? 'block' : 'hidden'} sm:hidden`}>
-        <div className="pt-2 pb-3 space-y-1">
-          <Link
-            to="/"
-            className="bg-white border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+            className="sm:hidden overflow-hidden"
           >
-            Home
-          </Link>
-          <Link
-            to="/categories"
-            className="bg-white border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
-          >
-            Categories
-          </Link>
-          <Link
-            to="/templates"
-            className="bg-white border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
-          >
-            Templates
-          </Link>
-          <Link
-            to="/generate"
-            className="bg-white border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
-          >
-            Generate
-          </Link>
-        </div>
-      </div>
+            <div className="pt-2 pb-3 space-y-1">
+              {navItems.map((item, index) => (
+                <motion.div
+                  key={item.name}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.3, delay: index * 0.1 }}
+                  whileHover={{ scale: 1.05, x: 5 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Link
+                    to={item.path}
+                    className="bg-white border-transparent text-gray-700 hover:bg-indigo-50 hover:border-indigo-500 hover:text-indigo-700 block pl-3 pr-4 py-3 border-l-2 text-base font-bold transition-all duration-200 flex items-center space-x-2"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <div className="text-indigo-600 w-5 h-5">{item.icon}</div>
+                    <span>{item.name}</span>
+                  </Link>
+                </motion.div>
+              ))}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: 0.4 }}
+                className="mt-4 px-4"
+              >
+                <button className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-md shadow-md flex items-center justify-center space-x-2 w-full text-sm">
+                  <PlusIcon className="w-5 h-5" />
+                  <span>New Prompt</span>
+                </button>
+              </motion.div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 };

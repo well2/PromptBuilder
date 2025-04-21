@@ -8,3 +8,4 @@ export { default as ErrorMessage } from './ErrorMessage';
 export { default as Toast } from './Toast';
 export { default as ToastContainer } from './ToastContainer';
 export { showToast } from './ToastContainer';
+export { default as PromptCard } from './PromptCard';

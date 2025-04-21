@@ -1,68 +1,93 @@
 import React from 'react';
+import HeroSection from '../components/sections/HeroSection';
+import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Card } from '../components/ui';
+import IconCard from '../components/ui/IconCard';
+import {
+  FolderIcon,
+  DocumentDuplicateIcon,
+  CommandLineIcon,
+  ArrowRightIcon
+} from '@heroicons/react/24/outline';
 
 const HomePage: React.FC = () => {
+  const actions = [
+    {
+      title: 'Manage Categories',
+      description: 'Organize your prompt templates in a hierarchical structure',
+      icon: <FolderIcon className="w-6 h-6" />,
+      variant: 'primary' as const,
+      link: '/categories'
+    },
+    {
+      title: 'Manage Templates',
+      description: 'Create and edit prompt templates with variables',
+      icon: <DocumentDuplicateIcon className="w-6 h-6" />,
+      variant: 'secondary' as const,
+      link: '/templates'
+    },
+    {
+      title: 'Generate Prompts',
+      description: 'Fill in templates and get responses from LLMs',
+      icon: <CommandLineIcon className="w-6 h-6" />,
+      variant: 'accent' as const,
+      link: '/generate'
+    },
+  ];
+
   return (
-    <div className="space-y-6">
-      <div className="text-center py-12 px-4 sm:px-6 lg:px-8">
-        <h1 className="text-4xl font-extrabold text-gray-900 sm:text-5xl sm:tracking-tight lg:text-6xl">
-          Welcome to PromptBuilder
-        </h1>
-        <p className="mt-5 max-w-xl mx-auto text-xl text-gray-500">
-          Create, manage, and use prompt templates for Large Language Models
-        </p>
-      </div>
+    <div className="space-y-12">
+      <HeroSection />
 
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        <Card
-          title="Manage Categories"
-          subtitle="Organize your prompt templates in a hierarchical structure"
-          className="hover:shadow-lg transition-shadow duration-300"
-        >
-          <p className="text-gray-500 mb-4">
-            Create categories and subcategories to organize your prompt templates in a way that makes sense for your workflow.
-          </p>
-          <Link
-            to="/categories"
-            className="btn btn-primary"
+      <section className="py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="text-center mb-12"
           >
-            View Categories
-          </Link>
-        </Card>
+            <h2 className="text-3xl font-bold mb-4">Get Started</h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Choose an action below to start working with your prompts
+            </p>
+          </motion.div>
 
-        <Card
-          title="Manage Templates"
-          subtitle="Create and edit prompt templates with variables"
-          className="hover:shadow-lg transition-shadow duration-300"
-        >
-          <p className="text-gray-500 mb-4">
-            Design prompt templates with variables that can be filled in at runtime to generate customized prompts for different use cases.
-          </p>
-          <Link
-            to="/templates"
-            className="btn btn-primary"
-          >
-            View Templates
-          </Link>
-        </Card>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {actions.map((action, index) => (
+              <motion.div
+                key={action.title}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+              >
+                <Link to={action.link} className="block h-full">
+                  <IconCard
+                    title={action.title}
+                    description={action.description}
+                    icon={action.icon}
+                    variant={action.variant}
+                    className="h-full"
+                    onClick={() => {}}
+                  />
+                </Link>
+              </motion.div>
+            ))}
+          </div>
 
-        <Card
-          title="Generate Prompts"
-          subtitle="Fill in templates and get responses from LLMs"
-          className="hover:shadow-lg transition-shadow duration-300"
-        >
-          <p className="text-gray-500 mb-4">
-            Select a category, fill in the template variables, and get responses from Large Language Models like GPT-4.
-          </p>
-          <Link
-            to="/generate"
-            className="btn btn-primary"
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="mt-12 text-center"
           >
-            Generate Prompts
-          </Link>
-        </Card>
-      </div>
+            <Link to="/generate" className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-3 rounded-md shadow-lg inline-flex items-center justify-center transition-all duration-200 transform hover:scale-105">
+              <span className="text-white">Start Building Prompts</span>
+              <ArrowRightIcon className="ml-2 w-5 h-5 text-white" />
+            </Link>
+          </motion.div>
+        </div>
+      </section>
     </div>
   );
 };

@@ -26,7 +26,7 @@ const TemplateForm: React.FC<TemplateFormProps> = ({
       model: template?.model || 'gpt-4',
     },
   });
-  
+
   // Reset form when template changes
   useEffect(() => {
     if (template) {
@@ -43,7 +43,7 @@ const TemplateForm: React.FC<TemplateFormProps> = ({
       });
     }
   }, [template, reset]);
-  
+
   // Available LLM models
   const modelOptions = [
     { value: 'gpt-4', label: 'GPT-4' },
@@ -54,7 +54,7 @@ const TemplateForm: React.FC<TemplateFormProps> = ({
     { value: 'claude-3-haiku', label: 'Claude 3 Haiku' },
     { value: 'gemini-pro', label: 'Gemini Pro' },
   ];
-  
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <Controller
@@ -70,7 +70,7 @@ const TemplateForm: React.FC<TemplateFormProps> = ({
           />
         )}
       />
-      
+
       <Controller
         name="model"
         control={control}
@@ -84,7 +84,7 @@ const TemplateForm: React.FC<TemplateFormProps> = ({
           />
         )}
       />
-      
+
       <Controller
         name="template"
         control={control}
@@ -96,7 +96,7 @@ const TemplateForm: React.FC<TemplateFormProps> = ({
             </label>
             <div className="mt-1 mb-2">
               <p className="text-sm text-gray-500">
-                Use double curly braces for variables, e.g., <code className="bg-gray-100 px-1 py-0.5 rounded">{{'{{'}}variable{{'}}'}}</code>
+                Use double curly braces for variables, e.g., <code className="bg-gray-100 px-1 py-0.5 rounded">{'{{variable}}'}</code>
               </p>
             </div>
             <textarea
@@ -111,7 +111,7 @@ const TemplateForm: React.FC<TemplateFormProps> = ({
           </div>
         )}
       />
-      
+
       <div className="flex justify-end">
         <Button
           type="submit"
