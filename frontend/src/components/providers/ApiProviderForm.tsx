@@ -33,8 +33,7 @@ const ApiProviderForm: React.FC<ApiProviderFormProps> = ({
   });
 
   const providerTypes = [
-    { value: 'OpenRouter', label: 'OpenRouter' },
-    { value: 'LiteLLM', label: 'LiteLLM' }
+    { value: 'OpenRouter', label: 'OpenRouter' }
   ];
 
   return (
@@ -52,7 +51,7 @@ const ApiProviderForm: React.FC<ApiProviderFormProps> = ({
           />
         )}
       />
-      
+
       <Controller
         name="providerType"
         control={control}
@@ -66,7 +65,7 @@ const ApiProviderForm: React.FC<ApiProviderFormProps> = ({
           />
         )}
       />
-      
+
       <Controller
         name="apiKey"
         control={control}
@@ -81,7 +80,7 @@ const ApiProviderForm: React.FC<ApiProviderFormProps> = ({
           />
         )}
       />
-      
+
       <Controller
         name="apiUrl"
         control={control}
@@ -95,7 +94,7 @@ const ApiProviderForm: React.FC<ApiProviderFormProps> = ({
           />
         )}
       />
-      
+
       <Controller
         name="isDefault"
         control={control}
@@ -115,7 +114,7 @@ const ApiProviderForm: React.FC<ApiProviderFormProps> = ({
           </div>
         )}
       />
-      
+
       <Controller
         name="configOptions"
         control={control}
@@ -130,7 +129,7 @@ const ApiProviderForm: React.FC<ApiProviderFormProps> = ({
           />
         )}
       />
-      
+
       <div className="flex justify-end">
         <Button
           type="submit"

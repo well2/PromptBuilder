@@ -6,7 +6,7 @@ Develop a web application that allows users to:
 - Select a task category (e.g., Development → Testing → Unit Tests),
 - Each category is strictly linked to a **Prompt Template** (metaprompt),
 - The `PromptTemplate` is used to generate the final prompt using input values from the UI,
-- The final prompt is sent to a language model (LLM) via **LiteLLM** or **OpenRouter** API,
+- The final prompt is sent to a language model (LLM) via **OpenRouter** API,
 - The response is returned and displayed in the web interface.
 
 ---
@@ -16,7 +16,7 @@ Develop a web application that allows users to:
 - **Backend:** .NET 8
 - **Frontend:** React
 - **Database:** SQLite
-- **LLM Integration:** LiteLLM and OpenRouter
+- **LLM Integration:** OpenRouter
 - **Template Format:** Jinja2-style (e.g., `{{input}}`, `{{language}}`)
 
 ---
@@ -50,7 +50,7 @@ Develop a web application that allows users to:
 1. User selects a category from a tree structure
 2. Backend fetches the associated `prompt_template`
 3. Template is rendered using user input → final prompt
-4. Prompt is sent to the LLM via LiteLLM or OpenRouter
+4. Prompt is sent to the LLM via OpenRouter
 5. Response is returned and shown to the user
 
 ---

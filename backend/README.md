@@ -16,7 +16,7 @@ The backend follows a clean architecture approach with the following projects:
 ### Prerequisites
 
 - .NET 8 SDK
-- An API key for OpenRouter or LiteLLM
+- An API key for OpenRouter
 
 ### Setup
 
@@ -75,7 +75,7 @@ dotnet test
 The application can be configured through the `appsettings.json` file:
 
 - **ConnectionStrings:DefaultConnection**: SQLite connection string
-- **LlmService:ApiType**: Type of LLM API to use (OpenRouter or LiteLLM)
+- **LlmService:ApiType**: Type of LLM API to use (OpenRouter)
 - **LlmService:ApiKey**: Your API key
 - **LlmService:ApiUrl**: URL of the LLM API
 

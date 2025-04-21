@@ -7,7 +7,7 @@ using PromptBuilder.Core.Interfaces;
 namespace PromptBuilder.Infrastructure.Services
 {
     /// <summary>
-    /// Service for interacting with Language Models via LiteLLM or OpenRouter
+    /// Service for interacting with Language Models via OpenRouter
     /// </summary>
     public class LlmService : ILlmService
     {
@@ -46,79 +46,18 @@ namespace PromptBuilder.Infrastructure.Services
                 _logger.LogWarning("No default API provider found. Using configuration values.");
 
                 // Fall back to configuration values
-                string apiType = _configuration["LlmService:ApiType"] ?? "OpenRouter";
                 string apiKey = _configuration["LlmService:ApiKey"] ?? throw new ArgumentNullException("LlmService:ApiKey is not configured");
                 string apiUrl = _configuration["LlmService:ApiUrl"] ?? throw new ArgumentNullException("LlmService:ApiUrl is not configured");
 
-                // Set up the request based on the API type from configuration
-                if (apiType.Equals("LiteLLM", StringComparison.OrdinalIgnoreCase))
-                {
-                    return await GetLiteLlmCompletionAsync(prompt, model, apiKey, apiUrl);
-                }
-                else // Default to OpenRouter
-                {
-                    return await GetOpenRouterCompletionAsync(prompt, model, apiKey, apiUrl);
-                }
+                // Use OpenRouter
+                return await GetOpenRouterCompletionAsync(prompt, model, apiKey, apiUrl);
             }
 
-            // Set up the request based on the provider type
-            if (provider.ProviderType.Equals("LiteLLM", StringComparison.OrdinalIgnoreCase))
-            {
-                return await GetLiteLlmCompletionAsync(prompt, model, provider.ApiKey, provider.ApiUrl);
-            }
-            else // Default to OpenRouter
-            {
-                return await GetOpenRouterCompletionAsync(prompt, model, provider.ApiKey, provider.ApiUrl);
-            }
+            // Use OpenRouter
+            return await GetOpenRouterCompletionAsync(prompt, model, provider.ApiKey, provider.ApiUrl);
         }
 
-        /// <summary>
-        /// Get a completion from LiteLLM
-        /// </summary>
-        /// <param name="prompt">The prompt to send</param>
-        /// <param name="model">The model to use</param>
-        /// <param name="apiKey">API key to use</param>
-        /// <param name="apiUrl">API URL to use</param>
-        /// <returns>Response from the LLM</returns>
-        private async Task<string> GetLiteLlmCompletionAsync(string prompt, string model, string apiKey, string apiUrl)
-        {
-            // Set up the request
-            var request = new
-            {
-                model = model,
-                messages = new[]
-                {
-                    new { role = "user", content = prompt }
-                }
-            };
 
-            // Set up the headers
-            _httpClient.DefaultRequestHeaders.Clear();
-            _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
-
-            // Send the request
-            var response = await _httpClient.PostAsJsonAsync(apiUrl, request);
-            response.EnsureSuccessStatusCode();
-
-            // Parse the response
-            var responseContent = await response.Content.ReadFromJsonAsync<JsonDocument>();
-
-            if (responseContent == null)
-            {
-                throw new InvalidOperationException("Failed to parse LiteLLM response");
-            }
-
-            // Extract the completion text
-            if (responseContent.RootElement.TryGetProperty("choices", out var choices) &&
-                choices.GetArrayLength() > 0 &&
-                choices[0].TryGetProperty("message", out var message) &&
-                message.TryGetProperty("content", out var content))
-            {
-                return content.GetString() ?? string.Empty;
-            }
-
-            throw new InvalidOperationException("Failed to extract completion from LiteLLM response");
-        }
 
         /// <summary>
         /// Get a completion from OpenRouter

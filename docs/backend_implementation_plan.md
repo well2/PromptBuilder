@@ -43,7 +43,7 @@
 
 ### 4. Service Layer
 - [x] Implement template rendering service
-- [x] Implement LLM integration service (LiteLLM/OpenRouter)
+- [x] Implement LLM integration service (OpenRouter)
 - [x] Create business logic services
 
 ### 5. API Controllers

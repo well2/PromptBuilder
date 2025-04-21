@@ -99,14 +99,8 @@ namespace PromptBuilder.Infrastructure.Services
                 throw new KeyNotFoundException($"API Provider with ID {id} not found");
             }
 
-            // Currently only supporting OpenRouter
-            if (provider.ProviderType.Equals("OpenRouter", StringComparison.OrdinalIgnoreCase))
-            {
-                return await GetOpenRouterModelsAsync(provider);
-            }
-
-            // For other provider types, return an empty list for now
-            return Enumerable.Empty<LlmModelDto>();
+            // Only supporting OpenRouter
+            return await GetOpenRouterModelsAsync(provider);
         }
 
         /// <summary>
