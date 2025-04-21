@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using PromptBuilder.Core.DTOs;
 using PromptBuilder.Core.Interfaces;
+using System.Text.Json; // Added using directive for JsonSerializer
+using Microsoft.Extensions.Logging; // Added using directive for ILogger
 
 namespace PromptBuilder.API.Controllers
 {
@@ -22,14 +24,18 @@ namespace PromptBuilder.API.Controllers
         /// <param name="unitOfWork">Unit of work</param>
         /// <param name="templateRenderingService">Template rendering service</param>
         /// <param name="llmService">LLM service</param>
+        private readonly ILogger<GenerateController> _logger;
+
         public GenerateController(
             IUnitOfWork unitOfWork,
             ITemplateRenderingService templateRenderingService,
-            ILlmService llmService)
+            ILlmService llmService,
+            ILogger<GenerateController> logger)
         {
             _unitOfWork = unitOfWork;
             _templateRenderingService = templateRenderingService;
             _llmService = llmService;
+            _logger = logger;
         }
         
         /// <summary>
@@ -58,31 +64,48 @@ namespace PromptBuilder.API.Controllers
             
             try
             {
-                // Render the template with the input values
+                // Render the template with the input values (this will be the 'Generated Prompt' shown in the UI)
                 var renderedPrompt = _templateRenderingService.RenderTemplate(
                     category.PromptTemplate.Template,
                     generatePromptDto.Input);
-                
-                // Get the response from the LLM
-                var llmResponse = await _llmService.GetCompletionAsync(
-                    renderedPrompt,
-                    category.PromptTemplate.Model);
-                
-                // Return the response
+
+                // Construct the meta prompt for the LLM
+                var metaPrompt = $@"You are a meta-prompt generator. Your task is to take a template and user-provided inputs and generate a detailed, effective prompt that can be used to get a desired output from another LLM.
+
+Original Template:
+```
+{category.PromptTemplate.Template}
+```
+
+User Inputs:
+```json
+{JsonSerializer.Serialize(generatePromptDto.Input, new JsonSerializerOptions { WriteIndented = true })}
+```
+
+Based on the Original Template and User Inputs, generate a detailed and effective prompt. The generated prompt should be ready to be used directly with an LLM to get the desired output based on the template and inputs. Do NOT include any conversational text or explanations in your response, only the generated prompt itself.";
+
+                // Get the meta prompt from the LLM
+                var generatedMetaPrompt = await _llmService.GetCompletionAsync(
+                    metaPrompt, // Send the meta prompt to the LLM
+                    category.PromptTemplate.Model); // Use the template's model
+
+                // Return the response, with the generated meta prompt in the Response field
                 return Ok(new LlmResponseDto
                 {
-                    GeneratedPrompt = renderedPrompt,
-                    Response = llmResponse,
+                    GeneratedPrompt = renderedPrompt, // Keep the original rendered prompt here
+                    Response = generatedMetaPrompt, // Put the generated meta prompt here
                     Model = category.PromptTemplate.Model
                 });
             }
             catch (ArgumentException ex)
             {
+                _logger.LogError(ex, "Template rendering error");
                 return BadRequest($"Template rendering error: {ex.Message}");
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, $"Error generating response: {ex.Message}");
+                _logger.LogError(ex, "Error generating meta prompt");
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error generating meta prompt: {ex.Message}");
             }
         }
     }
