@@ -142,5 +142,35 @@ namespace PromptBuilder.Core.DTOs
         /// Price per 1M tokens for completion (output)
         /// </summary>
         public double? PricingCompletion { get; set; }
+
+        /// <summary>
+        /// Price per 1M tokens for image input
+        /// </summary>
+        public double? PricingImage { get; set; }
+
+        /// <summary>
+        /// Price per request
+        /// </summary>
+        public double? PricingRequest { get; set; }
+
+        /// <summary>
+        /// Price per 1M tokens for input cache read
+        /// </summary>
+        public double? PricingInputCacheRead { get; set; }
+
+        /// <summary>
+        /// Price per 1M tokens for input cache write
+        /// </summary>
+        public double? PricingInputCacheWrite { get; set; }
+
+        /// <summary>
+        /// Price per web search
+        /// </summary>
+        public double? PricingWebSearch { get; set; }
+
+        /// <summary>
+        /// Price per internal reasoning token
+        /// </summary>
+        public double? PricingInternalReasoning { get; set; }
     }
 }

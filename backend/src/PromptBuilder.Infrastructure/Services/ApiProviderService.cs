@@ -125,6 +125,8 @@ namespace PromptBuilder.Infrastructure.Services
                 response.EnsureSuccessStatusCode();
 
                 var content = await response.Content.ReadAsStringAsync();
+                // Log the raw response content for debugging
+                Console.WriteLine($"Raw OpenRouter models response: {content}");
                 var modelsResponse = JsonSerializer.Deserialize<OpenRouterModelsResponse>(content, new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true
@@ -145,8 +147,14 @@ namespace PromptBuilder.Infrastructure.Services
                     ContextLength = m.Context_Length,
                     Provider = m.Provider,
                     // Add additional properties from OpenRouter model data
-                    PricingPrompt = m.Pricing?.Prompt,
-                    PricingCompletion = m.Pricing?.Completion
+                    PricingPrompt = double.TryParse(m.Pricing?.Prompt, out double prompt) ? prompt : (double?)null,
+                    PricingCompletion = double.TryParse(m.Pricing?.Completion, out double completion) ? completion : (double?)null,
+                    PricingImage = double.TryParse(m.Pricing?.Image, out double image) ? image : (double?)null,
+                    PricingRequest = double.TryParse(m.Pricing?.Request, out double request) ? request : (double?)null,
+                    PricingInputCacheRead = double.TryParse(m.Pricing?.Input_Cache_Read, out double inputCacheRead) ? inputCacheRead : (double?)null,
+                    PricingInputCacheWrite = double.TryParse(m.Pricing?.Input_Cache_Write, out double inputCacheWrite) ? inputCacheWrite : (double?)null,
+                    PricingWebSearch = double.TryParse(m.Pricing?.Web_Search, out double webSearch) ? webSearch : (double?)null,
+                    PricingInternalReasoning = double.TryParse(m.Pricing?.Internal_Reasoning, out double internalReasoning) ? internalReasoning : (double?)null
                 }).OrderBy(m => m.Name); // Sort models by name for better display
             }
             catch (Exception ex)
@@ -191,8 +199,30 @@ namespace PromptBuilder.Infrastructure.Services
             public string? Name { get; set; }
             public string? Description { get; set; }
             public int? Context_Length { get; set; }
+            public long? Created { get; set; }
             public string? Provider { get; set; }
+            public OpenRouterModelArchitecture? Architecture { get; set; }
+            public OpenRouterModelProvider? Top_Provider { get; set; }
             public OpenRouterModelPricing? Pricing { get; set; }
+            public Dictionary<string, string>? Per_Request_Limits { get; set; }
+        }
+
+        /// <summary>
+        /// Architecture information for OpenRouter model
+        /// </summary>
+        private class OpenRouterModelArchitecture
+        {
+            public List<string>? Input_Modalities { get; set; }
+            public List<string>? Output_Modalities { get; set; }
+            public string? Tokenizer { get; set; }
+        }
+
+        /// <summary>
+        /// Provider information for OpenRouter model
+        /// </summary>
+        private class OpenRouterModelProvider
+        {
+            public bool? Is_Moderated { get; set; }
         }
 
         /// <summary>
@@ -200,8 +230,14 @@ namespace PromptBuilder.Infrastructure.Services
         /// </summary>
         private class OpenRouterModelPricing
         {
-            public double? Prompt { get; set; }
-            public double? Completion { get; set; }
+            public string? Prompt { get; set; }
+            public string? Completion { get; set; }
+            public string? Image { get; set; }
+            public string? Request { get; set; }
+            public string? Input_Cache_Read { get; set; }
+            public string? Input_Cache_Write { get; set; }
+            public string? Web_Search { get; set; }
+            public string? Internal_Reasoning { get; set; }
         }
     }
 }
