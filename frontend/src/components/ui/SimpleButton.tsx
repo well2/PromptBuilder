@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 
 type ButtonVariant = 'primary' | 'secondary' | 'accent' | 'tertiary' | 'quaternary' | 'success' | 'error' | 'outline';
 type ButtonSize = 'sm' | 'md' | 'lg';
@@ -10,17 +9,15 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   isLoading?: boolean;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
-  fullWidth?: boolean;
 }
 
-const Button: React.FC<ButtonProps> = ({
+const SimpleButton: React.FC<ButtonProps> = ({
   children,
   variant = 'primary',
   size = 'md',
   isLoading = false,
   leftIcon,
   rightIcon,
-  fullWidth = false,
   className = '',
   disabled,
   ...props
@@ -48,18 +45,15 @@ const Button: React.FC<ButtonProps> = ({
     baseClasses,
     variantClasses[variant],
     sizeClasses[size],
-    fullWidth ? 'w-full' : '',
+    'transition-transform hover:scale-105 active:scale-95',
     isLoading ? 'opacity-70 cursor-not-allowed' : '',
     className,
   ].filter(Boolean).join(' ');
 
   return (
-    <motion.button
-      whileHover={{ scale: 1.03 }}
-      whileTap={{ scale: 0.97 }}
+    <button
       className={classes}
       disabled={isLoading || disabled}
-      // @ts-ignore - Fixing type issues with motion.button
       {...props}
     >
       {isLoading && (
@@ -71,8 +65,8 @@ const Button: React.FC<ButtonProps> = ({
       {!isLoading && leftIcon && <span className="mr-2">{leftIcon}</span>}
       {children}
       {!isLoading && rightIcon && <span className="ml-2">{rightIcon}</span>}
-    </motion.button>
+    </button>
   );
 };
 
-export default Button;
+export default SimpleButton;

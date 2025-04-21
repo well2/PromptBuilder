@@ -1,5 +1,4 @@
 import React, { ButtonHTMLAttributes, ReactNode } from 'react';
-import { motion } from 'framer-motion';
 
 interface AnimatedButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
@@ -9,7 +8,7 @@ interface AnimatedButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   icon?: ReactNode;
 }
 
-const AnimatedButton: React.FC<AnimatedButtonProps> = ({
+const SimpleAnimatedButton: React.FC<AnimatedButtonProps> = ({
   children,
   variant = 'primary',
   size = 'md',
@@ -49,12 +48,9 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
   };
 
   return (
-    <motion.button
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
-      className={`btn ${getVariantClasses()} ${getSizeClasses()} ${className}`}
+    <button
+      className={`btn ${getVariantClasses()} ${getSizeClasses()} transition-transform hover:scale-105 active:scale-95 ${className}`}
       disabled={isLoading}
-      // @ts-ignore - Fixing type issues with motion.button
       {...props}
     >
       {isLoading ? (
@@ -66,8 +62,8 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
         <span className="mr-2">{icon}</span>
       ) : null}
       {children}
-    </motion.button>
+    </button>
   );
 };
 
-export default AnimatedButton;
+export default SimpleAnimatedButton;

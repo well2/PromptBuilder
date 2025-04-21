@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Card, Button, LoadingSpinner, ErrorMessage, showToast } from '../components/ui';
+import { Card, Button, LoadingSpinner, ErrorMessage } from '../components/ui';
 import { CategoryTree, CategoryForm } from '../components/categories';
 import { useCategories, useTemplates } from '../hooks';
 import { CreateCategoryDto } from '../types/models';

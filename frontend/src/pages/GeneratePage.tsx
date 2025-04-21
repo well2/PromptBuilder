@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import { Card, Button, LoadingSpinner, ErrorMessage } from '../components/ui';
 import { CategoryTree } from '../components/categories';
 import { DynamicForm } from '../components/generate';
 import { useCategories, useTemplates, useGenerate } from '../hooks';
 import { Category, LlmResponseDto } from '../types/models';
+import { ClipboardDocumentIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 
 const GeneratePage: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
@@ -77,10 +79,27 @@ const GeneratePage: React.FC = () => {
   const variables = template?.template ? extractVariables(template.template) : [];
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-gray-900">Generate Prompt</h1>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="space-y-6"
+    >
+      <motion.h1
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600"
+      >
+        Generate Prompt
+      </motion.h1>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.3 }}
+        className="grid grid-cols-1 gap-6 lg:grid-cols-3"
+      >
         <div>
           <Card title="Select Category">
             {categories && categories.length > 0 ? (
@@ -150,16 +169,15 @@ const GeneratePage: React.FC = () => {
                         <pre className="p-4 bg-gray-50 rounded-md text-sm font-mono whitespace-pre-wrap">
                           {generatedResponse.generatedPrompt}
                         </pre>
-                        <button
-                          className="absolute top-2 right-2 p-1 rounded-md bg-white shadow-sm hover:bg-gray-100"
+                        <motion.button
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                          className="absolute top-2 right-2 p-2 rounded-full bg-indigo-100 text-indigo-700 shadow-sm hover:bg-indigo-200 transition-colors duration-200"
                           onClick={() => handleCopyToClipboard(generatedResponse.generatedPrompt)}
                           title="Copy to clipboard"
                         >
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" />
-                            <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z" />
-                          </svg>
-                        </button>
+                          <ClipboardDocumentIcon className="h-5 w-5" />
+                        </motion.button>
                       </div>
                     </div>
 
@@ -169,16 +187,15 @@ const GeneratePage: React.FC = () => {
                         <div className="p-4 bg-gray-50 rounded-md text-sm whitespace-pre-wrap">
                           {generatedResponse.response}
                         </div>
-                        <button
-                          className="absolute top-2 right-2 p-1 rounded-md bg-white shadow-sm hover:bg-gray-100"
+                        <motion.button
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                          className="absolute top-2 right-2 p-2 rounded-full bg-indigo-100 text-indigo-700 shadow-sm hover:bg-indigo-200 transition-colors duration-200"
                           onClick={() => handleCopyToClipboard(generatedResponse.response)}
                           title="Copy to clipboard"
                         >
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" />
-                            <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z" />
-                          </svg>
-                        </button>
+                          <ClipboardDocumentIcon className="h-5 w-5" />
+                        </motion.button>
                       </div>
                     </div>
 
@@ -186,8 +203,9 @@ const GeneratePage: React.FC = () => {
                       <Button
                         onClick={() => setGeneratedResponse(null)}
                         variant="outline"
+                        leftIcon={<ArrowPathIcon className="w-5 h-5" />}
                       >
-                        Reset
+                        Generate New Prompt
                       </Button>
                     </div>
                   </div>
@@ -204,8 +222,8 @@ const GeneratePage: React.FC = () => {
             </Card>
           )}
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
 

@@ -22,6 +22,7 @@ export interface UpdatePromptTemplateDto {
 export interface Category {
   id: number;
   name: string;
+  description?: string;
   parentId: number | null;
   promptTemplateId: number;
   children?: Category[] | null;

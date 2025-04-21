@@ -30,7 +30,7 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
       promptTemplateId: category?.promptTemplateId || (templates.length > 0 ? templates[0].id : 0),
     },
   });
-  
+
   // Reset form when category changes
   useEffect(() => {
     if (category) {
@@ -47,11 +47,11 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
       });
     }
   }, [category, templates, reset]);
-  
+
   // Filter out the current category and its children from parent options
   const getValidParentOptions = () => {
     if (!category) return categories;
-    
+
     // Helper function to get all descendant IDs
     const getDescendantIds = (categoryId: number): number[] => {
       const descendants: number[] = [];
@@ -72,14 +72,14 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
           }
         }
       };
-      
+
       findDescendants(categories, categoryId);
       return descendants;
     };
-    
+
     const invalidIds = getDescendantIds(category.id);
     invalidIds.push(category.id); // Add the category itself
-    
+
     // Flatten the category tree for filtering
     const flattenCategories = (cats: Category[]): Category[] => {
       return cats.reduce((acc: Category[], cat) => {
@@ -92,12 +92,12 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
         return acc;
       }, []);
     };
-    
+
     return flattenCategories(categories);
   };
-  
+
   const validParentOptions = getValidParentOptions();
-  
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <Controller
@@ -113,7 +113,7 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
           />
         )}
       />
-      
+
       <Controller
         name="parentId"
         control={control}
@@ -127,13 +127,13 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
                 label: cat.name,
               })),
             ]}
-            value={value === null ? '' : value.toString()}
+            value={value === null || value === undefined ? '' : value.toString()}
             onChange={e => onChange(e.target.value === '' ? null : Number(e.target.value))}
             {...field}
           />
         )}
       />
-      
+
       <Controller
         name="promptTemplateId"
         control={control}
@@ -152,7 +152,7 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
           />
         )}
       />
-      
+
       <div className="flex justify-end">
         <Button
           type="submit"

@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { categoryService } from '../services';
-import { Category, CreateCategoryDto, UpdateCategoryDto } from '../types/models';
+import { CreateCategoryDto, UpdateCategoryDto } from '../types/models';
 import { showToast } from '../components/ui';
 
 // Query keys

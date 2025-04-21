@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "exclude": [
+    "node_modules",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "src/test",
+    "src/components/ui/Button.tsx",
+    "src/components/ui/AnimatedButton.tsx"
+  ]
+}
