@@ -21,6 +21,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // Register repositories and services
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<ITemplateRenderingService, TemplateRenderingService>();
+builder.Services.AddScoped<IApiProviderRepository, ApiProviderRepository>();
+builder.Services.AddHttpClient<IApiProviderService, ApiProviderService>();
 builder.Services.AddHttpClient<ILlmService, LlmService>();
 
 // Configure CORS

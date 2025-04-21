@@ -7,6 +7,8 @@ import CategoryDetailPage from './pages/CategoryDetailPage';
 import TemplatesPage from './pages/TemplatesPage';
 import TemplateDetailPage from './pages/TemplateDetailPage';
 import GeneratePage from './pages/GeneratePage';
+import ProvidersPage from './pages/ProvidersPage';
+import ProviderDetailPage from './pages/ProviderDetailPage';
 import NotFoundPage from './pages/NotFoundPage';
 import { AnimatePresence } from 'framer-motion';
 import PageTransition from './components/layout/PageTransition';
@@ -56,6 +58,16 @@ const AnimatedRoutes = () => {
         <Route path="/generate" element={
           <PageTransition>
             <GeneratePage />
+          </PageTransition>
+        } />
+        <Route path="/providers" element={
+          <PageTransition>
+            <ProvidersPage />
+          </PageTransition>
+        } />
+        <Route path="/providers/:id" element={
+          <PageTransition>
+            <ProviderDetailPage />
           </PageTransition>
         } />
         <Route path="*" element={

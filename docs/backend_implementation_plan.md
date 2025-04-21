@@ -63,7 +63,15 @@
 - [x] Test API endpoints
 - [ ] Test LLM integration
 
-### 8. Documentation
+### 8. API Provider Integration
+- [x] Create API Provider model and repository
+- [x] Implement API Provider service
+- [x] Add API Provider controller with CRUD operations
+- [x] Integrate OpenRouter model fetching
+- [x] Update LLM service to use provider configuration
+- [x] Add tests for API Provider components
+
+### 9. Documentation
 - [x] Complete Swagger documentation
 - [x] Add XML comments for API endpoints
 - [x] Document setup and configuration process
@@ -86,3 +94,11 @@
 
 ### Generate
 - `POST /api/generate` - Generate prompt and get LLM response
+
+### API Providers
+- `GET /api/providers` - Get all API providers
+- `GET /api/providers/{id}` - Get API provider by ID
+- `POST /api/providers` - Create new API provider
+- `PUT /api/providers/{id}` - Update API provider
+- `DELETE /api/providers/{id}` - Delete API provider
+- `GET /api/providers/{id}/models` - Get available models for a provider

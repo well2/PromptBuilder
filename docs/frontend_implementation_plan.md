@@ -88,7 +88,14 @@
 - [x] Test cross-browser compatibility
 - [x] Optimize bundle size
 
-### 10. Deployment
+### 10. API Provider Integration
+- [x] Create API Provider management page
+- [x] Implement OpenRouter API key configuration
+- [x] Add API Provider selection to menu
+- [x] Update template form to fetch models from OpenRouter
+- [x] Add tests for API Provider components
+
+### 11. Deployment
 - [x] Set up environment variables
 - [x] Create production build
 - [x] Test production build locally

@@ -51,3 +51,38 @@ export interface LlmResponseDto {
   response: string;
   model: string;
 }
+
+// API Provider model
+export interface ApiProvider {
+  id: number;
+  name: string;
+  providerType: string;
+  apiUrl: string;
+  isDefault: boolean;
+}
+
+export interface CreateApiProviderDto {
+  name: string;
+  providerType: string;
+  apiKey: string;
+  apiUrl: string;
+  isDefault: boolean;
+  configOptions?: string;
+}
+
+export interface UpdateApiProviderDto {
+  name: string;
+  providerType: string;
+  apiKey: string;
+  apiUrl: string;
+  isDefault: boolean;
+  configOptions?: string;
+}
+
+export interface LlmModel {
+  id: string;
+  name: string;
+  description?: string;
+  contextLength?: number;
+  provider?: string;
+}

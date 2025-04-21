@@ -6,6 +6,7 @@ import {
   FolderIcon,
   DocumentIcon,
   CommandLineIcon,
+  ServerIcon,
   PlusIcon
 } from '@heroicons/react/24/outline';
 
@@ -21,6 +22,7 @@ const Header: React.FC = () => {
     { name: 'Categories', path: '/categories', icon: <FolderIcon className="w-5 h-5" /> },
     { name: 'Templates', path: '/templates', icon: <DocumentIcon className="w-5 h-5" /> },
     { name: 'Generate', path: '/generate', icon: <CommandLineIcon className="w-5 h-5" /> },
+    { name: 'API Provider', path: '/providers', icon: <ServerIcon className="w-5 h-5" /> },
   ];
 
   return (

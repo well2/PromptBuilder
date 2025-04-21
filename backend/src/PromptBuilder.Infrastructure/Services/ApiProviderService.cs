@@ -1,0 +1,185 @@
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
+using System.Text.Json;
+using PromptBuilder.Core.DTOs;
+using PromptBuilder.Core.Interfaces;
+using PromptBuilder.Core.Models;
+
+namespace PromptBuilder.Infrastructure.Services
+{
+    /// <summary>
+    /// Service implementation for API Providers
+    /// </summary>
+    public class ApiProviderService : IApiProviderService
+    {
+        private readonly IApiProviderRepository _repository;
+        private readonly HttpClient _httpClient;
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="repository">API provider repository</param>
+        /// <param name="httpClient">HTTP client</param>
+        public ApiProviderService(IApiProviderRepository repository, HttpClient httpClient)
+        {
+            _repository = repository;
+            _httpClient = httpClient;
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<ApiProviderDto>> GetAllProvidersAsync()
+        {
+            var providers = await _repository.GetAllAsync();
+            return providers.Select(MapToDto);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ApiProviderDto?> GetProviderByIdAsync(int id)
+        {
+            var provider = await _repository.GetByIdAsync(id);
+            return provider != null ? MapToDto(provider) : null;
+        }
+
+        /// <inheritdoc/>
+        public async Task<ApiProviderDto?> GetDefaultProviderAsync()
+        {
+            var provider = await _repository.GetDefaultAsync();
+            return provider != null ? MapToDto(provider) : null;
+        }
+
+        /// <inheritdoc/>
+        public async Task<ApiProviderDto> CreateProviderAsync(CreateApiProviderDto providerDto)
+        {
+            var provider = new ApiProvider
+            {
+                Name = providerDto.Name,
+                ProviderType = providerDto.ProviderType,
+                ApiKey = providerDto.ApiKey,
+                ApiUrl = providerDto.ApiUrl,
+                IsDefault = providerDto.IsDefault,
+                ConfigOptions = providerDto.ConfigOptions
+            };
+
+            var result = await _repository.AddAsync(provider);
+            return MapToDto(result);
+        }
+
+        /// <inheritdoc/>
+        public async Task<ApiProviderDto> UpdateProviderAsync(int id, UpdateApiProviderDto providerDto)
+        {
+            var provider = await _repository.GetByIdAsync(id);
+            if (provider == null)
+            {
+                throw new KeyNotFoundException($"API Provider with ID {id} not found");
+            }
+
+            provider.Name = providerDto.Name;
+            provider.ProviderType = providerDto.ProviderType;
+            provider.ApiKey = providerDto.ApiKey;
+            provider.ApiUrl = providerDto.ApiUrl;
+            provider.IsDefault = providerDto.IsDefault;
+            provider.ConfigOptions = providerDto.ConfigOptions;
+
+            var result = await _repository.UpdateAsync(provider);
+            return MapToDto(result);
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> DeleteProviderAsync(int id)
+        {
+            return await _repository.DeleteAsync(id);
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<LlmModelDto>> GetAvailableModelsAsync(int id)
+        {
+            var provider = await _repository.GetByIdAsync(id);
+            if (provider == null)
+            {
+                throw new KeyNotFoundException($"API Provider with ID {id} not found");
+            }
+
+            // Currently only supporting OpenRouter
+            if (provider.ProviderType.Equals("OpenRouter", StringComparison.OrdinalIgnoreCase))
+            {
+                return await GetOpenRouterModelsAsync(provider);
+            }
+
+            // For other provider types, return an empty list for now
+            return Enumerable.Empty<LlmModelDto>();
+        }
+
+        /// <summary>
+        /// Get available models from OpenRouter
+        /// </summary>
+        /// <param name="provider">API provider</param>
+        /// <returns>Collection of model DTOs</returns>
+        private async Task<IEnumerable<LlmModelDto>> GetOpenRouterModelsAsync(ApiProvider provider)
+        {
+            // Set up the headers
+            _httpClient.DefaultRequestHeaders.Clear();
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", provider.ApiKey);
+            _httpClient.DefaultRequestHeaders.Add("HTTP-Referer", "https://promptbuilder.app");
+
+            var response = await _httpClient.GetAsync("https://openrouter.ai/api/v1/models");
+            response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsStringAsync();
+            var modelsResponse = JsonSerializer.Deserialize<OpenRouterModelsResponse>(content, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+
+            if (modelsResponse?.Data == null)
+            {
+                return Enumerable.Empty<LlmModelDto>();
+            }
+
+            return modelsResponse.Data.Select(m => new LlmModelDto
+            {
+                Id = m.Id,
+                Name = m.Name ?? m.Id,
+                Description = m.Description,
+                ContextLength = m.Context_Length,
+                Provider = m.Provider
+            });
+        }
+
+        /// <summary>
+        /// Map API Provider entity to DTO
+        /// </summary>
+        /// <param name="provider">Provider entity</param>
+        /// <returns>Provider DTO</returns>
+        private static ApiProviderDto MapToDto(ApiProvider provider)
+        {
+            return new ApiProviderDto
+            {
+                Id = provider.Id,
+                Name = provider.Name,
+                ProviderType = provider.ProviderType,
+                ApiUrl = provider.ApiUrl,
+                IsDefault = provider.IsDefault
+            };
+        }
+
+        /// <summary>
+        /// Response class for OpenRouter models API
+        /// </summary>
+        private class OpenRouterModelsResponse
+        {
+            public List<OpenRouterModel>? Data { get; set; }
+        }
+
+        /// <summary>
+        /// Model class for OpenRouter model
+        /// </summary>
+        private class OpenRouterModel
+        {
+            public string Id { get; set; } = string.Empty;
+            public string? Name { get; set; }
+            public string? Description { get; set; }
+            public int? Context_Length { get; set; }
+            public string? Provider { get; set; }
+        }
+    }
+}
