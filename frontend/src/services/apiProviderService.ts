@@ -1,7 +1,7 @@
 import api from './api';
 import { ApiProvider, CreateApiProviderDto, LlmModel, UpdateApiProviderDto } from '../types/models';
 
-const BASE_URL = '/api/providers';
+const BASE_URL = '/providers';
 
 const apiProviderService = {
   /**
