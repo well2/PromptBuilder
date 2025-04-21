@@ -13,9 +13,9 @@ Develop a web application that allows users to:
 
 ## 📦 Technologies
 
-- **Backend:** Python 3.11+, FastAPI
-- **Frontend:** React (or Vue/Svelte)
-- **Database:** SQLite (via SQLAlchemy)
+- **Backend:** .NET 8
+- **Frontend:** React
+- **Database:** SQLite
 - **LLM Integration:** LiteLLM and OpenRouter
 - **Template Format:** Jinja2-style (e.g., `{{input}}`, `{{language}}`)
 
