@@ -133,40 +133,62 @@ namespace PromptBuilder.Infrastructure.Services
             // Set up the request
             var request = new
             {
-                model = model,
+                model = model,  // Use the specified model (e.g., "openai/gpt-4o")
                 messages = new[]
                 {
                     new { role = "user", content = prompt }
-                }
+                },
+                // Optional parameters
+                max_tokens = 1000,  // Adjust as needed
+                temperature = 0.7   // Adjust as needed
             };
 
-            // Set up the headers
+            // Set up the headers according to OpenRouter documentation
             _httpClient.DefaultRequestHeaders.Clear();
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
+
+            // Add recommended headers for OpenRouter leaderboards
             _httpClient.DefaultRequestHeaders.Add("HTTP-Referer", "https://promptbuilder.app");
+            _httpClient.DefaultRequestHeaders.Add("X-Title", "PromptBuilder");
+
+            _logger.LogInformation($"Sending request to OpenRouter with model: {model}");
 
             // Send the request
             var response = await _httpClient.PostAsJsonAsync(apiUrl, request);
-            response.EnsureSuccessStatusCode();
 
-            // Parse the response
-            var responseContent = await response.Content.ReadFromJsonAsync<JsonDocument>();
+            // Log response status
+            _logger.LogInformation($"OpenRouter response status: {response.StatusCode}");
 
-            if (responseContent == null)
+            try
             {
-                throw new InvalidOperationException("Failed to parse OpenRouter response");
-            }
+                response.EnsureSuccessStatusCode();
 
-            // Extract the completion text
-            if (responseContent.RootElement.TryGetProperty("choices", out var choices) &&
-                choices.GetArrayLength() > 0 &&
-                choices[0].TryGetProperty("message", out var message) &&
-                message.TryGetProperty("content", out var content))
+                // Parse the response
+                var responseContent = await response.Content.ReadFromJsonAsync<JsonDocument>();
+
+                if (responseContent == null)
+                {
+                    throw new InvalidOperationException("Failed to parse OpenRouter response");
+                }
+
+                // Extract the completion text
+                if (responseContent.RootElement.TryGetProperty("choices", out var choices) &&
+                    choices.GetArrayLength() > 0 &&
+                    choices[0].TryGetProperty("message", out var message) &&
+                    message.TryGetProperty("content", out var content))
+                {
+                    return content.GetString() ?? string.Empty;
+                }
+
+                throw new InvalidOperationException("Failed to extract completion from OpenRouter response");
+            }
+            catch (Exception ex)
             {
-                return content.GetString() ?? string.Empty;
+                // Log the error and response content for debugging
+                var responseContent = await response.Content.ReadAsStringAsync();
+                _logger.LogError(ex, $"Error processing OpenRouter response: {responseContent}");
+                throw;
             }
-
-            throw new InvalidOperationException("Failed to extract completion from OpenRouter response");
         }
     }
 }

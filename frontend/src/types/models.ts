@@ -85,4 +85,6 @@ export interface LlmModel {
   description?: string;
   contextLength?: number;
   provider?: string;
+  pricingPrompt?: number;
+  pricingCompletion?: number;
 }

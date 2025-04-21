@@ -11,23 +11,23 @@ const ProviderDetailPage: React.FC = () => {
   const navigate = useNavigate();
   const isNew = id === 'new';
   const providerId = isNew ? 0 : parseInt(id || '0');
-  
-  const { 
-    providers, 
-    isLoadingProviders, 
-    providersError, 
-    createProvider, 
-    updateProvider, 
-    isCreating, 
-    isUpdating 
+
+  const {
+    providers,
+    isLoadingProviders,
+    providersError,
+    createProvider,
+    updateProvider,
+    isCreating,
+    isUpdating
   } = useApiProviders();
-  
+
   const [showModels, setShowModels] = useState(false);
-  
+
   const provider = providers.find(p => p.id === providerId);
-  
+
   const { data: models, isLoading: isLoadingModels } = useApiProviders().getModels(providerId);
-  
+
   const handleSubmit = async (data: UpdateApiProviderDto) => {
     try {
       if (isNew) {
@@ -40,7 +40,7 @@ const ProviderDetailPage: React.FC = () => {
       console.error('Error saving provider:', error);
     }
   };
-  
+
   if (!isNew && isLoadingProviders) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -48,11 +48,11 @@ const ProviderDetailPage: React.FC = () => {
       </div>
     );
   }
-  
+
   if (!isNew && providersError) {
     return <ErrorMessage message="Failed to load API provider" />;
   }
-  
+
   if (!isNew && !provider) {
     return <ErrorMessage message="API provider not found" />;
   }
@@ -65,7 +65,7 @@ const ProviderDetailPage: React.FC = () => {
           Back to Providers
         </Link>
       </div>
-      
+
       <div className="flex flex-col md:flex-row gap-6">
         <div className="md:w-2/3">
           <Card>
@@ -78,7 +78,7 @@ const ProviderDetailPage: React.FC = () => {
                 <Badge variant="success" className="ml-3">Default</Badge>
               )}
             </div>
-            
+
             <ApiProviderForm
               provider={provider}
               onSubmit={handleSubmit}
@@ -86,12 +86,12 @@ const ProviderDetailPage: React.FC = () => {
             />
           </Card>
         </div>
-        
+
         {!isNew && (
           <div className="md:w-1/3">
             <Card>
               <h2 className="text-xl font-semibold text-gray-800 mb-4">Available Models</h2>
-              
+
               <Button
                 onClick={() => setShowModels(!showModels)}
                 className="mb-4 w-full"
@@ -99,7 +99,7 @@ const ProviderDetailPage: React.FC = () => {
               >
                 {showModels ? 'Hide Models' : 'Show Available Models'}
               </Button>
-              
+
               {showModels && (
                 <div className="mt-4">
                   {isLoadingModels ? (
@@ -109,7 +109,7 @@ const ProviderDetailPage: React.FC = () => {
                   ) : models && models.length > 0 ? (
                     <div className="space-y-3 max-h-96 overflow-y-auto">
                       {models.map(model => (
-                        <div key={model.id} className="p-3 bg-gray-50 rounded-lg">
+                        <div key={model.id} className="p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                           <div className="font-medium text-gray-800">{model.name}</div>
                           <div className="text-xs text-gray-500 mt-1">{model.id}</div>
                           {model.provider && (
@@ -117,6 +117,17 @@ const ProviderDetailPage: React.FC = () => {
                           )}
                           {model.contextLength && (
                             <div className="text-xs text-gray-500">Context: {model.contextLength.toLocaleString()} tokens</div>
+                          )}
+                          {(model.pricingPrompt !== undefined || model.pricingCompletion !== undefined) && (
+                            <div className="text-xs text-gray-500 mt-1">
+                              <span className="font-medium">Pricing:</span>
+                              {model.pricingPrompt !== undefined && (
+                                <span className="ml-1">Input: ${model.pricingPrompt.toFixed(2)}/1M tokens</span>
+                              )}
+                              {model.pricingCompletion !== undefined && (
+                                <span className="ml-1">Output: ${model.pricingCompletion.toFixed(2)}/1M tokens</span>
+                              )}
+                            </div>
                           )}
                           {model.description && (
                             <div className="text-xs text-gray-600 mt-1">{model.description}</div>

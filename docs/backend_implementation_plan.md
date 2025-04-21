@@ -70,6 +70,9 @@
 - [x] Integrate OpenRouter model fetching
 - [x] Update LLM service to use provider configuration
 - [x] Add tests for API Provider components
+- [x] Enhance OpenRouter integration with proper headers
+- [x] Support model selection from OpenRouter models list
+- [x] Implement fallback to configuration when no provider is set
 
 ### 9. Documentation
 - [x] Complete Swagger documentation
