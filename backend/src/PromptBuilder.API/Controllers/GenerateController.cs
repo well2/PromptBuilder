@@ -17,15 +17,16 @@ namespace PromptBuilder.API.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private readonly ITemplateRenderingService _templateRenderingService;
         private readonly ILlmService _llmService;
-        
+
+        private readonly ILogger<GenerateController> _logger;
+
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="unitOfWork">Unit of work</param>
         /// <param name="templateRenderingService">Template rendering service</param>
         /// <param name="llmService">LLM service</param>
-        private readonly ILogger<GenerateController> _logger;
-
+        /// <param name="logger">Logger</param>
         public GenerateController(
             IUnitOfWork unitOfWork,
             ITemplateRenderingService templateRenderingService,
@@ -37,7 +38,7 @@ namespace PromptBuilder.API.Controllers
             _llmService = llmService;
             _logger = logger;
         }
-        
+
         /// <summary>
         /// Generate a prompt and get an LLM response
         /// </summary>
@@ -51,17 +52,17 @@ namespace PromptBuilder.API.Controllers
         {
             // Get the category with its template
             var category = await _unitOfWork.Categories.GetCategoryWithTemplateAsync(generatePromptDto.CategoryId);
-            
+
             if (category == null)
             {
                 return NotFound($"Category with ID {generatePromptDto.CategoryId} not found");
             }
-            
+
             if (category.PromptTemplate == null)
             {
                 return BadRequest($"Category with ID {generatePromptDto.CategoryId} has no associated template");
             }
-            
+
             try
             {
                 // Render the template with the input values (this will be the 'Generated Prompt' shown in the UI)
