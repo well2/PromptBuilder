@@ -29,6 +29,9 @@ The backend follows a clean architecture approach with the following projects:
 # Restore dependencies
 dotnet restore
 
+# Install EF Core tools if not already installed
+# dotnet tool install --global dotnet-ef
+
 # Apply database migrations
 dotnet ef database update --project src/PromptBuilder.Infrastructure --startup-project src/PromptBuilder.API
 
@@ -36,7 +39,7 @@ dotnet ef database update --project src/PromptBuilder.Infrastructure --startup-p
 dotnet run --project src/PromptBuilder.API
 ```
 
-5. Open your browser and navigate to `https://localhost:5001` to access the Swagger UI
+5. Open your browser and navigate to `http://localhost:5062/swagger` to access the Swagger UI
 
 ## API Endpoints
 

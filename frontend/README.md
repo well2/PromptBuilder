@@ -40,8 +40,10 @@ yarn install
 4. Create a `.env` file with the following content:
 
 ```
-VITE_API_URL=http://localhost:5062/api
+VITE_API_BASE_URL=http://localhost:5062/api
 ```
+
+Note: When building for production with Docker, this is set to `/` since the API is served from the same origin.
 
 5. Start the development server:
 

@@ -20,7 +20,7 @@ Ensure you have Docker installed on your system:
 
 1.  **Clone the repository:**
     ```bash
-    git clone <repository-url>
+    git clone https://github.com/well2/PromptBuilder.git
     cd PromptBuilder
     ```
 2.  **Build the Docker image:**
@@ -32,6 +32,7 @@ Ensure you have Docker installed on your system:
     docker run -p 8080:8080 --name promptbuilder-instance promptbuilder-app
     ```
     *   Use `-d` for detached mode.
+    *   For database persistence, add a volume: `-v /path/on/host:/app/promptbuilder.db`
 4.  **Access:** `http://localhost:8080`
 5.  **Stop:** `Ctrl + C` or `docker stop promptbuilder-instance`
 6.  **Remove Container:** `docker rm promptbuilder-instance` (Note: Deletes internal SQLite DB unless a volume is mounted).

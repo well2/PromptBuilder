@@ -4,9 +4,10 @@ WORKDIR /app/frontend
 COPY frontend/package*.json ./
 RUN npm install
 COPY frontend/ ./
-# Set the API base URL for the frontend build (adjust if needed)
+# Set the API base URL for the frontend build
 # This assumes the backend API will be served from the same origin/port
-ENV VITE_API_BASE_URL=/
+# In development, this would be http://localhost:5062/api
+ENV VITE_API_BASE_URL=/api
 RUN npm run build
 
 # Stage 2: Build Backend
