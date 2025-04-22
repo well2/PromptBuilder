@@ -8,6 +8,7 @@ using PromptBuilder.Infrastructure.Repositories;
 using PromptBuilder.Infrastructure.Services;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Reflection;
+using Microsoft.Extensions.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,7 +33,8 @@ builder.Services.AddCors(options =>
     {
         policy.AllowAnyOrigin()
               .AllowAnyMethod()
-              .AllowAnyHeader();
+              .AllowAnyHeader()
+              .WithExposedHeaders("Content-Disposition");
     });
 });
 
@@ -67,26 +69,66 @@ builder.Services.AddSwaggerGen(c =>
     // Use operation IDs from method names
     c.CustomOperationIds(apiDesc =>
     {
-        return apiDesc.ActionDescriptor.RouteValues["action"];
+        if (apiDesc.ActionDescriptor.RouteValues.TryGetValue("action", out var action))
+        {
+            return action;
+        }
+        return apiDesc.RelativePath;
     });
 });
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+// Initialize the database
+using (var scope = app.Services.CreateScope())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
+    var services = scope.ServiceProvider;
+    try
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "PromptBuilder API v1");
-        c.RoutePrefix = string.Empty; // Set Swagger UI at the app's root
-    });
+        var context = services.GetRequiredService<ApplicationDbContext>();
+        context.Database.EnsureCreated();
+
+        // Seed initial data if needed
+        DbInitializer.Initialize(context);
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while initializing the database.");
+    }
 }
+
+// Configure the HTTP request pipeline.
+// Enable Swagger in all environments
+app.UseSwagger();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "PromptBuilder API v1");
+    c.RoutePrefix = "swagger"; // Set Swagger UI at /swagger
+});
+
+// Add a simple middleware to log all requests
+app.Use(async (context, next) =>
+{
+    Console.WriteLine($"Request: {context.Request.Method} {context.Request.Path}");
+    await next.Invoke();
+    Console.WriteLine($"Response: {context.Response.StatusCode}");
+});
 
 app.UseHttpsRedirection();
 app.UseCors();
 app.UseAuthorization();
+app.UseRouting();
+
+// Configure API routes
 app.MapControllers();
+
+// Configure static files
+app.UseStaticFiles();
+app.UseDefaultFiles(); // Serves index.html for root path requests
+
+// Fallback for SPA routing - ensures client-side routes are handled by index.html
+// This should be the last middleware in the pipeline
+app.MapFallbackToFile("index.html");
 
 app.Run();
