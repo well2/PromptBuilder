@@ -57,7 +57,7 @@ Build the image (`docker build`) and run it on the server (`docker run`).
 ### Docker Configuration Notes
 
 *   **Database:** SQLite DB (`promptbuilder.db`) is created inside the container at `/app`. Use volume mounting for persistence.
-*   **Frontend API URL:** Set to `/` during build, assuming API is at the same origin.
+*   **Frontend API URL:** Set to `/api` during build, assuming API is at the same origin.
 *   **Backend Environment:** Defaults to `Production`. Override with `-e ASPNETCORE_ENVIRONMENT=Development` if needed.
 
 ---

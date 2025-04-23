@@ -43,7 +43,7 @@ yarn install
 VITE_API_BASE_URL=http://localhost:5062/api
 ```
 
-Note: When building for production with Docker, this is set to `/` since the API is served from the same origin.
+Note: When building for production with Docker, this is set to `/api` since the API is served from the same origin with the `/api` prefix.
 
 5. Start the development server:
 
