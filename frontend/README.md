@@ -1,4 +1,4 @@
-# PromptBuilder Frontend
+# PromptBuilder Frontend v0.1.0
 
 This is the frontend for the PromptBuilder application, built with React, TypeScript, and Tailwind CSS.
 

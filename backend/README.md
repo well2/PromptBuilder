@@ -1,4 +1,4 @@
-# PromptBuilder Backend
+# PromptBuilder Backend v0.1.0
 
 This is the backend API for the PromptBuilder application, built with .NET 8, Entity Framework Core, and SQLite.
 
