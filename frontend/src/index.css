@@ -57,17 +57,9 @@
 }
 
 @layer components {
-  .nav-item {
+  /* Menu styling */
+  .menu-item {
     @apply relative;
-  }
-
-  .nav-item a {
-    @apply block py-4 px-3;
-  }
-
-  .nav-item a::before {
-    content: '';
-    @apply absolute inset-0 -top-4 opacity-0;
   }
 
   .btn {

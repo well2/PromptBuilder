@@ -54,25 +54,26 @@ const Header: React.FC = () => {
           </div>
           
           <nav className="hidden md:flex md:items-center">
-            {navItems.map((item, index) => (
-              <motion.div
-                key={item.name}
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: index * 0.1 }}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="mx-2 nav-item"
-              >
-                <Link
-                  to={item.path}
-                  className="border-transparent text-gray-700 hover:border-indigo-500 hover:text-indigo-700 inline-flex items-center border-b-2 text-sm md:text-base font-bold transition-all duration-200 space-x-1"
+            <div className="flex space-x-4">
+              {navItems.map((item, index) => (
+                <motion.div
+                  key={item.name}
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: index * 0.1 }}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  <div className="text-indigo-600 w-5 h-5">{item.icon}</div>
-                  <span>{item.name}</span>
-                </Link>
-              </motion.div>
-            ))}
+                  <Link
+                    to={item.path}
+                    className="flex flex-col items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-indigo-600 transition-colors duration-200"
+                  >
+                    <div className="text-indigo-600 w-5 h-5 mb-1">{item.icon}</div>
+                    <span>{item.name}</span>
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
           </nav>
           
           <div className="flex md:hidden items-center">
