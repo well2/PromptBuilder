@@ -61,6 +61,7 @@
   .menu-item-container {
     position: relative;
     display: block;
+    margin: 0 0.25rem;
   }
 
   .menu-item {
@@ -74,11 +75,25 @@
     font-size: 0.875rem;
     line-height: 1.25rem;
     transition: all 0.2s ease;
+    white-space: nowrap;
+    min-width: max-content;
   }
 
-  .menu-item:hover {
+  .menu-item:hover, .menu-item:focus {
     background-color: rgba(79, 70, 229, 0.1);
     color: #4f46e5;
+    outline: none;
+  }
+
+  /* Zvětšení oblasti pro hover */
+  .menu-item-container::before {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    right: -4px;
+    bottom: -4px;
+    z-index: -1;
   }
 
   .menu-icon {
@@ -99,10 +114,11 @@
     color: white;
   }
 
-  .menu-item-primary:hover {
+  .menu-item-primary:hover, .menu-item-primary:focus {
     background-color: #4338ca;
     color: white;
     box-shadow: 0 6px 8px -1px rgba(79, 70, 229, 0.4);
+    outline: none;
   }
 
   .menu-item-danger {
@@ -116,10 +132,11 @@
     color: white;
   }
 
-  .menu-item-danger:hover {
+  .menu-item-danger:hover, .menu-item-danger:focus {
     background-color: #dc2626;
     color: white;
     box-shadow: 0 6px 8px -1px rgba(239, 68, 68, 0.4);
+    outline: none;
   }
 
   .mobile-menu-item {
@@ -132,16 +149,19 @@
     font-weight: 600;
     font-size: 1rem;
     line-height: 1.5rem;
+    width: 100%;
+    position: relative;
   }
 
   .mobile-menu-item span {
     margin-left: 0.5rem;
   }
 
-  .mobile-menu-item:hover {
+  .mobile-menu-item:hover, .mobile-menu-item:focus {
     background-color: #f3f4f6;
     border-left-color: #4f46e5;
     color: #4f46e5;
+    outline: none;
   }
 
   .mobile-menu-item-primary {

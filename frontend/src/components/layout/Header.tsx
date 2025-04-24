@@ -55,7 +55,7 @@ const Header: React.FC = () => {
           </div>
 
           <nav className="hidden md:flex md:items-center">
-            <div className="flex space-x-4">
+            <div className="flex space-x-2 lg:space-x-4">
               {navItems.map((item, index) => (
                 <motion.div
                   key={item.name}
@@ -71,7 +71,7 @@ const Header: React.FC = () => {
                     className={`menu-item ${item.primary ? 'menu-item-primary' : ''} ${item.danger ? 'menu-item-danger' : ''}`}
                   >
                     <div className="menu-icon">{item.icon}</div>
-                    <span>{item.name}</span>
+                    <span className="md:text-xs lg:text-sm">{item.name}</span>
                   </Link>
                 </motion.div>
               ))}
@@ -134,22 +134,25 @@ const Header: React.FC = () => {
             transition={{ duration: 0.3 }}
             className="md:hidden overflow-hidden"
           >
-            <div className="pt-2 pb-3 space-y-1">
+            <div className="pt-2 pb-3 space-y-2">
               {navItems.map((item, index) => (
                 <motion.div
                   key={item.name}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.3, delay: index * 0.1 }}
-                  whileHover={{ scale: 1.05, x: 5 }}
-                  whileTap={{ scale: 0.95 }}
+                  whileHover={{ scale: 1.02, x: 3 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="px-2"
                 >
                   <Link
                     to={item.path}
                     className={`mobile-menu-item ${item.primary ? 'mobile-menu-item-primary' : ''} ${item.danger ? 'mobile-menu-item-danger' : ''}`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    <div className="text-indigo-600 w-5 h-5">{item.icon}</div>
+                    <div className={`w-5 h-5 ${item.primary ? 'text-indigo-600' : ''} ${item.danger ? 'text-red-600' : 'text-indigo-600'}`}>
+                      {item.icon}
+                    </div>
                     <span>{item.name}</span>
                   </Link>
                 </motion.div>
