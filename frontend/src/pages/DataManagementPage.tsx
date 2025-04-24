@@ -1,9 +1,12 @@
 import React, { useState, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ArrowDownTrayIcon, 
   ArrowUpTrayIcon, 
-  TrashIcon 
+  TrashIcon,
+  CheckCircleIcon,
+  XCircleIcon,
+  InformationCircleIcon
 } from '@heroicons/react/24/outline';
 import { dataManagementService } from '../services/dataManagementService';
 import { showToast } from '../components/ui';
@@ -12,6 +15,8 @@ const DataManagementPage: React.FC = () => {
   const [isExporting, setIsExporting] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
+  const [showSuccess, setShowSuccess] = useState<string | null>(null);
+  const [showError, setShowError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleExport = async () => {
@@ -31,9 +36,13 @@ const DataManagementPage: React.FC = () => {
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
       
+      setShowSuccess('Data exported successfully!');
+      setTimeout(() => setShowSuccess(null), 3000);
       showToast('success', 'Data exported successfully');
     } catch (error) {
       console.error('Error exporting data:', error);
+      setShowError('Failed to export data');
+      setTimeout(() => setShowError(null), 3000);
       showToast('error', 'Failed to export data');
     } finally {
       setIsExporting(false);
@@ -53,6 +62,9 @@ const DataManagementPage: React.FC = () => {
     try {
       setIsImporting(true);
       await dataManagementService.importData(file);
+      
+      setShowSuccess('Data imported successfully!');
+      setTimeout(() => setShowSuccess(null), 3000);
       showToast('success', 'Data imported successfully');
       
       // Reset the file input
@@ -61,9 +73,13 @@ const DataManagementPage: React.FC = () => {
       }
       
       // Reload the page to reflect the changes
-      window.location.reload();
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
     } catch (error) {
       console.error('Error importing data:', error);
+      setShowError('Failed to import data');
+      setTimeout(() => setShowError(null), 3000);
       showToast('error', 'Failed to import data');
     } finally {
       setIsImporting(false);
@@ -81,23 +97,93 @@ const DataManagementPage: React.FC = () => {
     try {
       setIsResetting(true);
       await dataManagementService.resetData();
+      
+      setShowSuccess('Database reset successfully!');
+      setTimeout(() => setShowSuccess(null), 3000);
       showToast('success', 'Database reset successfully');
       
       // Reload the page to reflect the changes
-      window.location.reload();
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
     } catch (error) {
       console.error('Error resetting database:', error);
+      setShowError('Failed to reset database');
+      setTimeout(() => setShowError(null), 3000);
       showToast('error', 'Failed to reset database');
     } finally {
       setIsResetting(false);
     }
   };
 
+  const jsonExample = `{
+  "promptTemplates": [
+    {
+      "id": 1,
+      "name": "Example Template",
+      "template": "Write a {{type}} about {{topic}}",
+      "model": "openai/gpt-4"
+    }
+  ],
+  "categories": [
+    {
+      "id": 1,
+      "name": "Writing",
+      "parentId": null,
+      "promptTemplateId": 1
+    }
+  ],
+  "apiProviders": [
+    {
+      "id": 1,
+      "name": "OpenRouter",
+      "providerType": "OpenRouter",
+      "apiKey": "your-api-key",
+      "apiUrl": "https://openrouter.ai/api/v1",
+      "isDefault": true
+    }
+  ]
+}`;
+
   return (
     <div className="space-y-8">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">Data Management</h1>
       </div>
+
+      {/* Success notification */}
+      <AnimatePresence>
+        {showSuccess && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="bg-green-50 border-l-4 border-green-500 p-4 rounded-md shadow-md"
+          >
+            <div className="flex items-center">
+              <CheckCircleIcon className="h-6 w-6 text-green-500 mr-3" />
+              <p className="text-green-700 font-medium">{showSuccess}</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Error notification */}
+      <AnimatePresence>
+        {showError && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="bg-red-50 border-l-4 border-red-500 p-4 rounded-md shadow-md"
+          >
+            <div className="flex items-center">
+              <XCircleIcon className="h-6 w-6 text-red-500 mr-3" />
+              <p className="text-red-700 font-medium">{showError}</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Export Card */}
@@ -233,6 +319,26 @@ const DataManagementPage: React.FC = () => {
             <p className="text-sm text-yellow-700">
               <strong>Warning:</strong> Importing data will replace all existing data. Make sure to export your current data first if you want to keep it.
             </p>
+          </div>
+        </div>
+      </div>
+
+      {/* JSON Example Section */}
+      <div className="bg-white rounded-lg shadow-md overflow-hidden mt-8">
+        <div className="p-6">
+          <div className="flex items-center space-x-3 mb-4">
+            <div className="bg-indigo-100 p-3 rounded-full">
+              <InformationCircleIcon className="w-6 h-6 text-indigo-600" />
+            </div>
+            <h3 className="text-xl font-semibold text-gray-900">JSON Format Example</h3>
+          </div>
+          
+          <p className="text-gray-600 mb-4">
+            Below is an example of the JSON format used for importing and exporting data:
+          </p>
+          
+          <div className="bg-gray-50 rounded-md p-4 overflow-auto max-h-96">
+            <pre className="text-sm text-gray-800">{jsonExample}</pre>
           </div>
         </div>
       </div>

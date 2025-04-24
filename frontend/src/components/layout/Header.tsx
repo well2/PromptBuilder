@@ -66,7 +66,7 @@ const Header: React.FC = () => {
               >
                 <Link
                   to={item.path}
-                  className="border-transparent text-gray-700 hover:border-indigo-500 hover:text-indigo-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm md:text-base font-bold transition-all duration-200 space-x-1 hover:scale-110"
+                  className="border-transparent text-gray-700 hover:border-indigo-500 hover:text-indigo-700 inline-flex items-center px-3 py-2 border-b-2 text-sm md:text-base font-bold transition-all duration-200 space-x-1"
                 >
                   <div className="text-indigo-600 w-5 h-5">{item.icon}</div>
                   <span>{item.name}</span>
