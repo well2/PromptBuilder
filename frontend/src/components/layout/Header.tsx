@@ -62,11 +62,11 @@ const Header: React.FC = () => {
                 transition={{ duration: 0.3, delay: index * 0.1 }}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="mx-3"
+                className="mx-2 nav-item"
               >
                 <Link
                   to={item.path}
-                  className="border-transparent text-gray-700 hover:border-indigo-500 hover:text-indigo-700 inline-flex items-center px-3 py-2 border-b-2 text-sm md:text-base font-bold transition-all duration-200 space-x-1"
+                  className="border-transparent text-gray-700 hover:border-indigo-500 hover:text-indigo-700 inline-flex items-center border-b-2 text-sm md:text-base font-bold transition-all duration-200 space-x-1"
                 >
                   <div className="text-indigo-600 w-5 h-5">{item.icon}</div>
                   <span>{item.name}</span>

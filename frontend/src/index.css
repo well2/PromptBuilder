@@ -57,6 +57,19 @@
 }
 
 @layer components {
+  .nav-item {
+    @apply relative;
+  }
+
+  .nav-item a {
+    @apply block py-4 px-3;
+  }
+
+  .nav-item a::before {
+    content: '';
+    @apply absolute inset-0 -top-4 opacity-0;
+  }
+
   .btn {
     @apply inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-200 transform hover:scale-105 font-semibold;
   }
