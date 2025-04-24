@@ -80,7 +80,7 @@ builder.Services.AddSwaggerGen(c =>
 var app = builder.Build();
 
 // Log application version
-app.Logger.LogInformation("Starting PromptBuilder v0.1.0");
+app.Logger.LogInformation("Starting PromptBuilder v0.2.0");
 
 // Initialize the database
 using (var scope = app.Services.CreateScope())

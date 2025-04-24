@@ -48,7 +48,7 @@ const Header: React.FC = () => {
                   transition={{ duration: 0.5 }}
                   className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600"
                 >
-                  PromptBuilder
+                  PromptBuilder v0.2.0
                 </motion.span>
               </Link>
             </div>

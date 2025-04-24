@@ -1,4 +1,4 @@
-# PromptBuilder v0.1.0
+# PromptBuilder v0.2.0
 
 PromptBuilder is a web application designed to help users create, manage, and utilize prompt templates for various Large Language Models (LLMs). It features a .NET backend API (serving both the API and the frontend) and a React frontend, using an embedded SQLite database.
 
