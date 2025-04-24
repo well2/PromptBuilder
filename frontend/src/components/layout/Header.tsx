@@ -7,7 +7,6 @@ import {
   DocumentIcon,
   CommandLineIcon,
   ServerIcon,
-  PlusIcon,
   Cog6ToothIcon
 } from '@heroicons/react/24/outline';
 
@@ -31,7 +30,7 @@ const Header: React.FC = () => {
     <header className="bg-gradient-to-r from-indigo-50 to-purple-50 shadow-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
-          <div className="flex flex-grow">
+          <div className="flex items-center">
             <div className="flex-shrink-0 flex items-center">
               <Link to="/" className="flex items-center">
                 <motion.div
@@ -52,39 +51,31 @@ const Header: React.FC = () => {
                 </motion.span>
               </Link>
             </div>
-            <nav className="hidden sm:ml-6 sm:flex sm:flex-wrap sm:items-center">
-              {navItems.map((item, index) => (
-                <motion.div
-                  key={item.name}
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: index * 0.1 }}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="mx-2 my-1"
+          </div>
+          
+          <nav className="hidden md:flex md:items-center">
+            {navItems.map((item, index) => (
+              <motion.div
+                key={item.name}
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: index * 0.1 }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="mx-3"
+              >
+                <Link
+                  to={item.path}
+                  className="border-transparent text-gray-700 hover:border-indigo-500 hover:text-indigo-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm md:text-base font-bold transition-all duration-200 space-x-1 hover:scale-110"
                 >
-                  <Link
-                    to={item.path}
-                    className="border-transparent text-gray-700 hover:border-indigo-500 hover:text-indigo-700 inline-flex items-center px-3 pt-1 border-b-2 text-base font-bold transition-all duration-200 space-x-2 hover:scale-110"
-                  >
-                    <div className="text-indigo-600 w-5 h-5">{item.icon}</div>
-                    <span>{item.name}</span>
-                  </Link>
-                </motion.div>
-              ))}
-            </nav>
-          </div>
-          <div className="hidden sm:flex sm:items-center">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-md shadow-md flex items-center space-x-2 text-sm"
-            >
-              <PlusIcon className="w-5 h-5" />
-              <span>New Prompt</span>
-            </motion.button>
-          </div>
-          <div className="-mr-2 flex items-center sm:hidden">
+                  <div className="text-indigo-600 w-5 h-5">{item.icon}</div>
+                  <span>{item.name}</span>
+                </Link>
+              </motion.div>
+            ))}
+          </nav>
+          
+          <div className="flex md:hidden items-center">
             <motion.button
               whileTap={{ scale: 0.9 }}
               type="button"
@@ -138,7 +129,7 @@ const Header: React.FC = () => {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
-            className="sm:hidden overflow-hidden"
+            className="md:hidden overflow-hidden"
           >
             <div className="pt-2 pb-3 space-y-1">
               {navItems.map((item, index) => (
@@ -160,17 +151,6 @@ const Header: React.FC = () => {
                   </Link>
                 </motion.div>
               ))}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: 0.4 }}
-                className="mt-4 px-4"
-              >
-                <button className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-md shadow-md flex items-center justify-center space-x-2 w-full text-sm">
-                  <PlusIcon className="w-5 h-5" />
-                  <span>New Prompt</span>
-                </button>
-              </motion.div>
             </div>
           </motion.div>
         )}
