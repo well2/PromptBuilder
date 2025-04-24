@@ -19,9 +19,10 @@ namespace PromptBuilder.API.Tests.Controllers
 
         public DataManagementControllerTests()
         {
-            // Setup in-memory database
+            // Setup in-memory database with warning suppression for transactions
             var options = new DbContextOptionsBuilder<ApplicationDbContext>()
                 .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+                .ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.InMemoryEventId.TransactionIgnoredWarning))
                 .Options;
 
             _dbContext = new ApplicationDbContext(options);
