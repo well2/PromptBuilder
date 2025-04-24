@@ -31,7 +31,7 @@ const Header: React.FC = () => {
     <header className="bg-gradient-to-r from-indigo-50 to-purple-50 shadow-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
-          <div className="flex">
+          <div className="flex flex-grow">
             <div className="flex-shrink-0 flex items-center">
               <Link to="/" className="flex items-center">
                 <motion.div
@@ -52,7 +52,7 @@ const Header: React.FC = () => {
                 </motion.span>
               </Link>
             </div>
-            <nav className="hidden sm:ml-10 sm:flex sm:space-x-10">
+            <nav className="hidden sm:ml-6 sm:flex sm:flex-wrap sm:items-center">
               {navItems.map((item, index) => (
                 <motion.div
                   key={item.name}
@@ -61,10 +61,11 @@ const Header: React.FC = () => {
                   transition={{ duration: 0.3, delay: index * 0.1 }}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
+                  className="mx-2 my-1"
                 >
                   <Link
                     to={item.path}
-                    className="border-transparent text-gray-700 hover:border-indigo-500 hover:text-indigo-700 inline-flex items-center px-4 pt-1 border-b-2 text-base font-bold transition-all duration-200 space-x-2 hover:scale-110"
+                    className="border-transparent text-gray-700 hover:border-indigo-500 hover:text-indigo-700 inline-flex items-center px-3 pt-1 border-b-2 text-base font-bold transition-all duration-200 space-x-2 hover:scale-110"
                   >
                     <div className="text-indigo-600 w-5 h-5">{item.icon}</div>
                     <span>{item.name}</span>

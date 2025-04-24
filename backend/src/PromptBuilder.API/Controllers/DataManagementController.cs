@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using PromptBuilder.Core.Models;
 using PromptBuilder.Infrastructure.Data;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace PromptBuilder.API.Controllers
 {
@@ -38,12 +39,20 @@ namespace PromptBuilder.API.Controllers
             try
             {
                 // Get all data from the database
-                var templates = await _dbContext.PromptTemplates.ToListAsync();
-                var categories = await _dbContext.Categories.ToListAsync();
-                var apiProviders = await _dbContext.ApiProviders.ToListAsync();
+                var templates = await _dbContext.PromptTemplates
+                    .AsNoTracking()
+                    .ToListAsync();
+                
+                var categories = await _dbContext.Categories
+                    .AsNoTracking()
+                    .ToListAsync();
+                
+                var apiProviders = await _dbContext.ApiProviders
+                    .AsNoTracking()
+                    .ToListAsync();
 
                 // Create a data object to export
-                var exportData = new
+                var exportData = new ExportData
                 {
                     PromptTemplates = templates,
                     Categories = categories,
@@ -53,7 +62,8 @@ namespace PromptBuilder.API.Controllers
                 // Serialize to JSON
                 var jsonOptions = new JsonSerializerOptions
                 {
-                    WriteIndented = true
+                    WriteIndented = true,
+                    ReferenceHandler = ReferenceHandler.IgnoreCycles
                 };
                 var json = JsonSerializer.Serialize(exportData, jsonOptions);
 
@@ -99,7 +109,8 @@ namespace PromptBuilder.API.Controllers
                 // Deserialize the JSON
                 var jsonOptions = new JsonSerializerOptions
                 {
-                    PropertyNameCaseInsensitive = true
+                    PropertyNameCaseInsensitive = true,
+                    ReferenceHandler = ReferenceHandler.IgnoreCycles
                 };
                 
                 var importData = JsonSerializer.Deserialize<ImportData>(json, jsonOptions);
@@ -260,6 +271,27 @@ namespace PromptBuilder.API.Controllers
             _dbContext.ApiProviders.RemoveRange(_dbContext.ApiProviders);
             await _dbContext.SaveChangesAsync();
         }
+    }
+
+    /// <summary>
+    /// Class for exporting data
+    /// </summary>
+    public class ExportData
+    {
+        /// <summary>
+        /// List of prompt templates
+        /// </summary>
+        public List<PromptTemplate>? PromptTemplates { get; set; }
+
+        /// <summary>
+        /// List of categories
+        /// </summary>
+        public List<Category>? Categories { get; set; }
+
+        /// <summary>
+        /// List of API providers
+        /// </summary>
+        public List<ApiProvider>? ApiProviders { get; set; }
     }
 
     /// <summary>
