@@ -9,6 +9,7 @@ import TemplateDetailPage from './pages/TemplateDetailPage';
 import GeneratePage from './pages/GeneratePage';
 import ProvidersPage from './pages/ProvidersPage';
 import ProviderDetailPage from './pages/ProviderDetailPage';
+import DataManagementPage from './pages/DataManagementPage';
 import NotFoundPage from './pages/NotFoundPage';
 import { AnimatePresence } from 'framer-motion';
 import PageTransition from './components/layout/PageTransition';
@@ -68,6 +69,11 @@ const AnimatedRoutes = () => {
         <Route path="/providers/:id" element={
           <PageTransition>
             <ProviderDetailPage />
+          </PageTransition>
+        } />
+        <Route path="/management" element={
+          <PageTransition>
+            <DataManagementPage />
           </PageTransition>
         } />
         <Route path="*" element={
