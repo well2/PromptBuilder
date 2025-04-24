@@ -38,17 +38,41 @@ namespace PromptBuilder.API.Controllers
         {
             try
             {
-                // Get all data from the database
+                // Get all data from the database with no tracking and no navigation properties
                 var templates = await _dbContext.PromptTemplates
                     .AsNoTracking()
+                    .Select(t => new PromptTemplateExport
+                    {
+                        Id = t.Id,
+                        Name = t.Name,
+                        Template = t.Template,
+                        Model = t.Model
+                    })
                     .ToListAsync();
                 
                 var categories = await _dbContext.Categories
                     .AsNoTracking()
+                    .Select(c => new CategoryExport
+                    {
+                        Id = c.Id,
+                        Name = c.Name,
+                        ParentId = c.ParentId,
+                        PromptTemplateId = c.PromptTemplateId
+                    })
                     .ToListAsync();
                 
                 var apiProviders = await _dbContext.ApiProviders
                     .AsNoTracking()
+                    .Select(p => new ApiProviderExport
+                    {
+                        Id = p.Id,
+                        Name = p.Name,
+                        ProviderType = p.ProviderType,
+                        ApiKey = p.ApiKey,
+                        ApiUrl = p.ApiUrl,
+                        IsDefault = p.IsDefault,
+                        ConfigOptions = p.ConfigOptions
+                    })
                     .ToListAsync();
 
                 // Create a data object to export
@@ -62,8 +86,7 @@ namespace PromptBuilder.API.Controllers
                 // Serialize to JSON
                 var jsonOptions = new JsonSerializerOptions
                 {
-                    WriteIndented = true,
-                    ReferenceHandler = ReferenceHandler.IgnoreCycles
+                    WriteIndented = true
                 };
                 var json = JsonSerializer.Serialize(exportData, jsonOptions);
 
@@ -109,11 +132,10 @@ namespace PromptBuilder.API.Controllers
                 // Deserialize the JSON
                 var jsonOptions = new JsonSerializerOptions
                 {
-                    PropertyNameCaseInsensitive = true,
-                    ReferenceHandler = ReferenceHandler.IgnoreCycles
+                    PropertyNameCaseInsensitive = true
                 };
                 
-                var importData = JsonSerializer.Deserialize<ImportData>(json, jsonOptions);
+                var importData = JsonSerializer.Deserialize<ExportData>(json, jsonOptions);
 
                 if (importData == null)
                 {
@@ -131,10 +153,14 @@ namespace PromptBuilder.API.Controllers
                     // Import prompt templates
                     if (importData.PromptTemplates != null)
                     {
-                        foreach (var template in importData.PromptTemplates)
+                        foreach (var templateExport in importData.PromptTemplates)
                         {
-                            // Reset the ID to let the database assign a new one
-                            template.Id = 0;
+                            var template = new PromptTemplate
+                            {
+                                Name = templateExport.Name,
+                                Template = templateExport.Template,
+                                Model = templateExport.Model
+                            };
                             await _dbContext.PromptTemplates.AddAsync(template);
                         }
                         await _dbContext.SaveChangesAsync();
@@ -143,67 +169,71 @@ namespace PromptBuilder.API.Controllers
                     // Import API providers
                     if (importData.ApiProviders != null)
                     {
-                        foreach (var provider in importData.ApiProviders)
+                        foreach (var providerExport in importData.ApiProviders)
                         {
-                            // Reset the ID to let the database assign a new one
-                            provider.Id = 0;
+                            var provider = new ApiProvider
+                            {
+                                Name = providerExport.Name,
+                                ProviderType = providerExport.ProviderType,
+                                ApiKey = providerExport.ApiKey,
+                                ApiUrl = providerExport.ApiUrl,
+                                IsDefault = providerExport.IsDefault,
+                                ConfigOptions = providerExport.ConfigOptions
+                            };
                             await _dbContext.ApiProviders.AddAsync(provider);
                         }
                         await _dbContext.SaveChangesAsync();
                     }
 
+                    // Create a mapping of old template IDs to new template IDs
+                    var templateIdMap = new Dictionary<int, int>();
+                    var oldTemplates = importData.PromptTemplates?.Select(t => t.Id).ToList() ?? new List<int>();
+                    var newTemplates = await _dbContext.PromptTemplates.Select(t => t.Id).ToListAsync();
+
+                    for (int i = 0; i < Math.Min(oldTemplates.Count, newTemplates.Count); i++)
+                    {
+                        templateIdMap[oldTemplates[i]] = newTemplates[i];
+                    }
+
                     // Import categories
                     if (importData.Categories != null)
                     {
-                        // Create a mapping of old template IDs to new template IDs
-                        var templateIdMap = new Dictionary<int, int>();
-                        var oldTemplates = importData.PromptTemplates?.Select(t => t.Id).ToList() ?? new List<int>();
-                        var newTemplates = await _dbContext.PromptTemplates.Select(t => t.Id).ToListAsync();
-
-                        for (int i = 0; i < Math.Min(oldTemplates.Count, newTemplates.Count); i++)
-                        {
-                            templateIdMap[oldTemplates[i]] = newTemplates[i];
-                        }
-
                         // First pass: Add all categories with updated template IDs
                         var categoryIdMap = new Dictionary<int, int>();
-                        foreach (var category in importData.Categories)
+                        foreach (var categoryExport in importData.Categories)
                         {
-                            var oldId = category.Id;
+                            var oldId = categoryExport.Id;
                             
-                            // Reset the ID to let the database assign a new one
-                            category.Id = 0;
+                            var category = new Category
+                            {
+                                Name = categoryExport.Name,
+                                ParentId = null // We'll update this in the second pass
+                            };
                             
                             // Update the template ID
-                            if (templateIdMap.ContainsKey(category.PromptTemplateId))
+                            if (categoryExport.PromptTemplateId.HasValue && templateIdMap.ContainsKey(categoryExport.PromptTemplateId.Value))
                             {
-                                category.PromptTemplateId = templateIdMap[category.PromptTemplateId];
+                                category.PromptTemplateId = templateIdMap[categoryExport.PromptTemplateId.Value];
                             }
-                            
-                            // Temporarily set ParentId to null, we'll update it in the second pass
-                            var originalParentId = category.ParentId;
-                            category.ParentId = null;
+                            else if (categoryExport.PromptTemplateId.HasValue)
+                            {
+                                category.PromptTemplateId = categoryExport.PromptTemplateId.Value;
+                            }
                             
                             await _dbContext.Categories.AddAsync(category);
                             await _dbContext.SaveChangesAsync();
                             
                             // Store the mapping of old ID to new ID
                             categoryIdMap[oldId] = category.Id;
-                            
-                            // Store the original parent ID for the second pass
-                            if (originalParentId.HasValue)
-                            {
-                                category.ParentId = originalParentId;
-                            }
                         }
 
                         // Second pass: Update parent IDs
-                        foreach (var category in importData.Categories)
+                        foreach (var categoryExport in importData.Categories)
                         {
-                            if (category.ParentId.HasValue && categoryIdMap.ContainsKey(category.ParentId.Value))
+                            if (categoryExport.ParentId.HasValue && categoryIdMap.ContainsKey(categoryExport.ParentId.Value))
                             {
-                                var newId = categoryIdMap[category.Id];
-                                var newParentId = categoryIdMap[category.ParentId.Value];
+                                var newId = categoryIdMap[categoryExport.Id];
+                                var newParentId = categoryIdMap[categoryExport.ParentId.Value];
                                 
                                 var dbCategory = await _dbContext.Categories.FindAsync(newId);
                                 if (dbCategory != null)
@@ -281,37 +311,52 @@ namespace PromptBuilder.API.Controllers
         /// <summary>
         /// List of prompt templates
         /// </summary>
-        public List<PromptTemplate>? PromptTemplates { get; set; }
+        public List<PromptTemplateExport>? PromptTemplates { get; set; }
 
         /// <summary>
         /// List of categories
         /// </summary>
-        public List<Category>? Categories { get; set; }
+        public List<CategoryExport>? Categories { get; set; }
 
         /// <summary>
         /// List of API providers
         /// </summary>
-        public List<ApiProvider>? ApiProviders { get; set; }
+        public List<ApiProviderExport>? ApiProviders { get; set; }
     }
 
     /// <summary>
-    /// Class for deserializing imported data
+    /// Class for exporting prompt templates
     /// </summary>
-    public class ImportData
+    public class PromptTemplateExport
     {
-        /// <summary>
-        /// List of prompt templates
-        /// </summary>
-        public List<PromptTemplate>? PromptTemplates { get; set; }
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Template { get; set; } = string.Empty;
+        public string Model { get; set; } = string.Empty;
+    }
 
-        /// <summary>
-        /// List of categories
-        /// </summary>
-        public List<Category>? Categories { get; set; }
+    /// <summary>
+    /// Class for exporting categories
+    /// </summary>
+    public class CategoryExport
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public int? ParentId { get; set; }
+        public int? PromptTemplateId { get; set; }
+    }
 
-        /// <summary>
-        /// List of API providers
-        /// </summary>
-        public List<ApiProvider>? ApiProviders { get; set; }
+    /// <summary>
+    /// Class for exporting API providers
+    /// </summary>
+    public class ApiProviderExport
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string ProviderType { get; set; } = string.Empty;
+        public string ApiKey { get; set; } = string.Empty;
+        public string ApiUrl { get; set; } = string.Empty;
+        public bool IsDefault { get; set; }
+        public string? ConfigOptions { get; set; }
     }
 }
