@@ -17,13 +17,14 @@ const Header: React.FC = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
+  // Přeuspořádání položek menu - Generate jako první, Management jako nebezpečná funkce
   const navItems = [
+    { name: 'Generate', path: '/generate', icon: <CommandLineIcon className="w-5 h-5" />, primary: true },
     { name: 'Home', path: '/', icon: <HomeIcon className="w-5 h-5" /> },
     { name: 'Categories', path: '/categories', icon: <FolderIcon className="w-5 h-5" /> },
     { name: 'Templates', path: '/templates', icon: <DocumentIcon className="w-5 h-5" /> },
-    { name: 'Generate', path: '/generate', icon: <CommandLineIcon className="w-5 h-5" /> },
     { name: 'API Provider', path: '/providers', icon: <ServerIcon className="w-5 h-5" /> },
-    { name: 'Management', path: '/management', icon: <Cog6ToothIcon className="w-5 h-5" /> },
+    { name: 'Management', path: '/management', icon: <Cog6ToothIcon className="w-5 h-5" />, danger: true },
   ];
 
   return (
@@ -52,7 +53,7 @@ const Header: React.FC = () => {
               </Link>
             </div>
           </div>
-          
+
           <nav className="hidden md:flex md:items-center">
             <div className="flex space-x-4">
               {navItems.map((item, index) => (
@@ -63,19 +64,20 @@ const Header: React.FC = () => {
                   transition={{ duration: 0.3, delay: index * 0.1 }}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
+                  className="menu-item-container"
                 >
                   <Link
                     to={item.path}
-                    className="flex flex-col items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-indigo-600 transition-colors duration-200"
+                    className={`menu-item ${item.primary ? 'menu-item-primary' : ''} ${item.danger ? 'menu-item-danger' : ''}`}
                   >
-                    <div className="text-indigo-600 w-5 h-5 mb-1">{item.icon}</div>
+                    <div className="menu-icon">{item.icon}</div>
                     <span>{item.name}</span>
                   </Link>
                 </motion.div>
               ))}
             </div>
           </nav>
-          
+
           <div className="flex md:hidden items-center">
             <motion.button
               whileTap={{ scale: 0.9 }}
@@ -144,7 +146,7 @@ const Header: React.FC = () => {
                 >
                   <Link
                     to={item.path}
-                    className="bg-white border-transparent text-gray-700 hover:bg-indigo-50 hover:border-indigo-500 hover:text-indigo-700 block pl-3 pr-4 py-3 border-l-2 text-base font-bold transition-all duration-200 flex items-center space-x-2"
+                    className={`mobile-menu-item ${item.primary ? 'mobile-menu-item-primary' : ''} ${item.danger ? 'mobile-menu-item-danger' : ''}`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     <div className="text-indigo-600 w-5 h-5">{item.icon}</div>
