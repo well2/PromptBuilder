@@ -46,7 +46,7 @@ const ToastContainer: React.FC<ToastContainerProps> = ({
   
   return (
     <div
-      className={`fixed z-50 p-4 space-y-4 w-full max-w-sm ${positionClasses[position]}`}
+      className={`fixed z-50 p-4 space-y-4 w-full max-w-sm ${positionClasses[position]} mt-16`}
       aria-live="assertive"
     >
       {toasts.map((toast) => (

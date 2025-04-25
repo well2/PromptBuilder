@@ -28,7 +28,7 @@ const Header: React.FC = () => {
   ];
 
   return (
-    <header className="bg-gradient-to-r from-indigo-50 to-purple-50 shadow-lg">
+    <header className="relative z-10 bg-gradient-to-r from-indigo-50 to-purple-50 shadow-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
@@ -54,8 +54,8 @@ const Header: React.FC = () => {
             </div>
           </div>
 
-          <nav className="hidden md:flex md:items-center">
-            <div className="flex space-x-2 lg:space-x-4">
+          <nav className="hidden md:flex md:items-center pr-4">
+            <div className="flex space-x-2 lg:space-x-2 h-full">
               {navItems.map((item, index) => (
                 <motion.div
                   key={item.name}
@@ -64,11 +64,11 @@ const Header: React.FC = () => {
                   transition={{ duration: 0.3, delay: index * 0.1 }}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="menu-item-container"
+                  className="menu-item-container h-full flex items-center"
                 >
                   <Link
                     to={item.path}
-                    className={`menu-item ${item.primary ? 'menu-item-primary' : ''} ${item.danger ? 'menu-item-danger' : ''}`}
+                    className={`menu-item ${item.primary ? 'menu-item-primary' : ''} ${item.danger ? 'menu-item-danger' : ''} h-full flex items-center`}
                   >
                     <div className="menu-icon">{item.icon}</div>
                     <span className="md:text-xs lg:text-sm">{item.name}</span>
@@ -132,17 +132,15 @@ const Header: React.FC = () => {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
-            className="md:hidden overflow-hidden"
+            className="relative z-20 md:hidden"
           >
-            <div className="pt-2 pb-3 space-y-2">
+            <div className="pb-3 space-y-2">
               {navItems.map((item, index) => (
                 <motion.div
                   key={item.name}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.3, delay: index * 0.1 }}
-                  whileHover={{ scale: 1.02, x: 3 }}
-                  whileTap={{ scale: 0.98 }}
                   className="px-2"
                 >
                   <Link
